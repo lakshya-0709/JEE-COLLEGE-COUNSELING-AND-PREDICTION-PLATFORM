@@ -1,0 +1,268 @@
+/* ═══════════════════════════════════════════════════
+   Animations & Micro-interactions
+   ═══════════════════════════════════════════════════ */
+
+/* ─── Keyframes ──────────────────────────────────── */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 5px var(--cyan-glow), 0 0 20px transparent;
+    }
+    50% {
+        box-shadow: 0 0 10px var(--cyan-glow), 0 0 40px var(--cyan-glow);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes countUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Scroll Reveal Animation ────────────────────── */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Staggered card entrance */
+.result-card {
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+}
+
+.result-card:nth-child(1) { animation-delay: 0.05s; }
+.result-card:nth-child(2) { animation-delay: 0.1s; }
+.result-card:nth-child(3) { animation-delay: 0.15s; }
+.result-card:nth-child(4) { animation-delay: 0.2s; }
+.result-card:nth-child(5) { animation-delay: 0.25s; }
+.result-card:nth-child(6) { animation-delay: 0.3s; }
+.result-card:nth-child(7) { animation-delay: 0.35s; }
+.result-card:nth-child(8) { animation-delay: 0.4s; }
+.result-card:nth-child(9) { animation-delay: 0.45s; }
+.result-card:nth-child(10) { animation-delay: 0.5s; }
+
+/* Preference list staggered */
+.preference-item {
+    animation: slideInLeft 0.4s ease forwards;
+    opacity: 0;
+}
+
+.preference-item:nth-child(1) { animation-delay: 0.05s; }
+.preference-item:nth-child(2) { animation-delay: 0.1s; }
+.preference-item:nth-child(3) { animation-delay: 0.15s; }
+.preference-item:nth-child(4) { animation-delay: 0.2s; }
+.preference-item:nth-child(5) { animation-delay: 0.25s; }
+.preference-item:nth-child(6) { animation-delay: 0.3s; }
+.preference-item:nth-child(7) { animation-delay: 0.35s; }
+.preference-item:nth-child(8) { animation-delay: 0.4s; }
+.preference-item:nth-child(9) { animation-delay: 0.45s; }
+.preference-item:nth-child(10) { animation-delay: 0.5s; }
+
+/* ─── Hero Animations ────────────────────────────── */
+.hero-badge {
+    animation: fadeInUp 0.8s ease;
+}
+
+.hero-title {
+    animation: fadeInUp 0.8s ease 0.1s both;
+}
+
+.hero-subtitle {
+    animation: fadeInUp 0.8s ease 0.2s both;
+}
+
+.hero-stats {
+    animation: fadeInUp 0.8s ease 0.3s both;
+}
+
+.cta-button {
+    animation: fadeInUp 0.8s ease 0.4s both, pulseGlow 3s ease-in-out infinite 1.5s;
+}
+
+/* ─── CTA Hover Ripple ───────────────────────────── */
+.cta-button::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.2) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.cta-button:hover::after {
+    opacity: 1;
+}
+
+/* ─── Skeleton Loading ───────────────────────────── */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--bg-card) 25%,
+        rgba(148, 163, 184, 0.08) 50%,
+        var(--bg-card) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: var(--radius-sm);
+}
+
+.skeleton-text {
+    height: 1em;
+    margin-bottom: 0.5em;
+}
+
+.skeleton-card {
+    height: 120px;
+    margin-bottom: 1rem;
+}
+
+/* ─── Modal Animation ────────────────────────────── */
+.modal-overlay {
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+    animation: scaleIn 0.3s ease;
+}
+
+/* ─── Toast Animation ────────────────────────────── */
+@keyframes toastOut {
+    to {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+}
+
+.toast.removing {
+    animation: toastOut 0.3s ease forwards;
+}
+
+/* ─── Comparison Animation ───────────────────────── */
+.compare-result-grid {
+    animation: fadeInUp 0.5s ease;
+}
+
+/* ─── Chart Reveal ───────────────────────────────── */
+.trend-chart-container {
+    animation: scaleIn 0.4s ease;
+}
+
+/* ─── Number Counter ─────────────────────────────── */
+.stat-number {
+    animation: countUp 0.5s ease both;
+}
+
+/* ─── Floating Logo ──────────────────────────────── */
+.logo-icon {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* ─── Home Feature Cards Stagger ─────────────────── */
+.home-feature-card.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.home-feature-card.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.home-feature-card.reveal:nth-child(1) { transition-delay: 0.05s; }
+.home-feature-card.reveal:nth-child(2) { transition-delay: 0.15s; }
+.home-feature-card.reveal:nth-child(3) { transition-delay: 0.25s; }
+.home-feature-card.reveal:nth-child(4) { transition-delay: 0.35s; }
+
+.home-how-it-works.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
+}
+
+.home-how-it-works.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ─── Reduced Motion ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

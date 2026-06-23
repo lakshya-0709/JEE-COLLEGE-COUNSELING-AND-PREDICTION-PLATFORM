@@ -1,0 +1,472 @@
+/* ═══════════════════════════════════════════════════
+   JEE Counselor — Design System
+   Dark glassmorphism theme with electric accents
+   ═══════════════════════════════════════════════════ */
+
+/* ─── Design Tokens ──────────────────────────────── */
+:root {
+    /* Colors */
+    --bg-primary: #06090f;
+    --bg-secondary: #0c1120;
+    --bg-card: rgba(15, 23, 42, 0.65);
+    --bg-card-hover: rgba(20, 30, 55, 0.75);
+    --bg-input: rgba(15, 23, 42, 0.8);
+
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+
+    --cyan: #00d4ff;
+    --cyan-glow: rgba(0, 212, 255, 0.25);
+    --orange: #ff6b35;
+    --orange-glow: rgba(255, 107, 53, 0.25);
+    --green: #00c853;
+    --green-glow: rgba(0, 200, 83, 0.25);
+    --purple: #a855f7;
+    --purple-glow: rgba(168, 85, 247, 0.25);
+    --red: #ef4444;
+    --yellow: #eab308;
+
+    --safe-color: #00c853;
+    --safe-bg: rgba(0, 200, 83, 0.12);
+    --moderate-color: #ff9800;
+    --moderate-bg: rgba(255, 152, 0, 0.12);
+    --dream-color: #00d4ff;
+    --dream-bg: rgba(0, 212, 255, 0.12);
+
+    --gradient-primary: linear-gradient(135deg, #00d4ff 0%, #a855f7 100%);
+    --gradient-safe: linear-gradient(135deg, #00c853, #4caf50);
+    --gradient-moderate: linear-gradient(135deg, #ff9800, #ff6b35);
+    --gradient-dream: linear-gradient(135deg, #00d4ff, #a855f7);
+    --gradient-card-border: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(168, 85, 247, 0.1), rgba(255, 107, 53, 0.3));
+
+    --border-color: rgba(148, 163, 184, 0.1);
+    --border-glow: rgba(0, 212, 255, 0.3);
+
+    /* Typography */
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-heading: 'Outfit', 'Inter', sans-serif;
+
+    /* Spacing */
+    --section-padding: 5rem 0;
+    --container-max: 1200px;
+
+    /* Effects */
+    --glass-blur: 16px;
+    --glass-border: 1px solid rgba(148, 163, 184, 0.08);
+    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+    --shadow-glow: 0 0 30px rgba(0, 212, 255, 0.15);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Reset & Base ───────────────────────────────── */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+#particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.section {
+    padding: var(--section-padding);
+    position: relative;
+    z-index: 1;
+}
+
+.section--compact {
+    padding: 2rem 0 3rem;
+}
+
+a {
+    color: var(--cyan);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--purple);
+}
+
+/* ─── Typography ─────────────────────────────────── */
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.section-header--tight {
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.75rem;
+}
+
+.section-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ─── Glass Card ─────────────────────────────────── */
+.glass-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient-card-border);
+    opacity: 0.6;
+}
+
+.glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card), var(--shadow-glow);
+}
+
+.card-title {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+}
+
+/* ─── Form Elements ──────────────────────────────── */
+.form-group {
+    margin-bottom: 1.25rem;
+    position: relative;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.03em;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    transition: all var(--transition-fast);
+    outline: none;
+}
+
+.form-input:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 3px var(--cyan-glow);
+}
+
+.form-input::placeholder {
+    color: var(--text-muted);
+}
+
+select.form-input {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.5rem;
+}
+
+select[multiple].form-input {
+    height: auto;
+    min-height: 100px;
+    background-image: none;
+    padding-right: 1rem;
+}
+
+select[multiple].form-input option {
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+select[multiple].form-input option:checked {
+    background: var(--cyan-glow);
+    color: var(--cyan);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-hint {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+}
+
+/* Toggle Buttons */
+.toggle-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.toggle-btn {
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.toggle-btn:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+}
+
+.toggle-btn.active {
+    background: var(--cyan-glow);
+    border-color: var(--cyan);
+    color: var(--cyan);
+}
+
+/* Checkbox Group */
+.checkbox-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.checkbox-label:hover {
+    color: var(--text-primary);
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--cyan);
+    cursor: pointer;
+}
+
+/* Selected Branches Tags */
+.selected-branches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+}
+
+.branch-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.7rem;
+    background: var(--cyan-glow);
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    border-radius: 20px;
+    font-size: 0.78rem;
+    color: var(--cyan);
+}
+
+.branch-tag .remove-tag {
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    opacity: 0.7;
+}
+
+.branch-tag .remove-tag:hover {
+    opacity: 1;
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    padding: 0.9rem 2rem;
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: var(--radius-sm);
+    color: #fff;
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--cyan-glow);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.btn-loader {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+/* ─── Autocomplete ───────────────────────────────── */
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 100;
+    display: none;
+}
+
+.autocomplete-dropdown.active {
+    display: block;
+}
+
+.autocomplete-item {
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    transition: background var(--transition-fast);
+    font-size: 0.9rem;
+}
+
+.autocomplete-item:hover {
+    background: var(--cyan-glow);
+}
+
+.autocomplete-item .inst-type {
+    font-size: 0.75rem;
+    color: var(--cyan);
+    margin-left: 0.5rem;
+    opacity: 0.7;
+}
+
+.autocomplete-item .inst-state {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    display: block;
+}
+
+/* ─── Responsive ─────────────────────────────────── */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .container {
+        padding: 0 1rem;
+    }
+
+    .glass-card {
+        padding: 1.25rem;
+    }
+
+    .toggle-group {
+        flex-direction: column;
+    }
+
+    .toggle-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
