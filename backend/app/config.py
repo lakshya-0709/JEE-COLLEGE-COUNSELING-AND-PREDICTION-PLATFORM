@@ -30,9 +30,6 @@ CORS_ORIGINS = [
     "*",
 ]
 
-# JEE Constants
-TOTAL_JEE_MAIN_CANDIDATES = 1550000  # ~15.5 lakh candidates
-TOTAL_JEE_ADVANCED_CANDIDATES = 250000  # ~2.5 lakh qualified
 
 # Prediction thresholds
 SAFE_THRESHOLD = 0.85      # rank < 85% of closing = Safe

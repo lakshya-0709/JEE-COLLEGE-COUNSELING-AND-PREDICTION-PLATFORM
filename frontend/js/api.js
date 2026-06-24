@@ -45,19 +45,6 @@ const api = {
     },
 
     /**
-     * Generate preference list
-     */
-    async getPreferenceList(data) {
-        const res = await fetch(`${API_BASE}/preference-list`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        });
-        if (!res.ok) throw new Error('Preference list generation failed');
-        return res.json();
-    },
-
-    /**
      * Search colleges (autocomplete)
      */
     async searchColleges(query) {
@@ -76,10 +63,14 @@ const api = {
     },
 
     /**
-     * Get all branch names
+     * Get all branch names, optionally filtered by institute types
      */
-    async getBranches() {
-        const res = await fetch(`${API_BASE}/colleges/branches`);
+    async getBranches(types = []) {
+        let url = `${API_BASE}/colleges/branches`;
+        if (types && types.length > 0) {
+            url += `?types=${encodeURIComponent(types.join(','))}`;
+        }
+        const res = await fetch(url);
         if (!res.ok) return [];
         return res.json();
     },

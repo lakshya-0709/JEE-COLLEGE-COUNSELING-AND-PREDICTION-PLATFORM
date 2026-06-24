@@ -659,8 +659,8 @@
     font-size: 0.95rem;
 }
 
-/* ─── Preference List ────────────────────────────── */
-.preference-layout {
+/* ─── Cutoff Lookup ──────────────────────────────── */
+.cutoff-layout {
     display: grid;
     grid-template-columns: 400px 1fr;
     gap: 2rem;
@@ -668,82 +668,53 @@
     transition: all 0.4s ease-in-out;
 }
 
-.preference-layout.initial-state {
+.cutoff-layout.initial-state {
     grid-template-columns: 1fr;
     max-width: 500px;
     margin: 0 auto;
 }
 
-.preference-layout.initial-state .preference-results {
+.cutoff-layout.initial-state .cutoff-results {
     display: none !important;
 }
 
-.preference-layout.initial-state .form-card {
+.cutoff-layout.initial-state .form-card {
     position: relative;
     top: 0;
     width: 100%;
 }
 
-.preference-results {
+.cutoff-results {
     max-height: 80vh;
     overflow-y: auto;
 }
 
-.preference-item {
+/* ─── Cutoff Lookup Cards ────────────────────────── */
+.cutoff-item-card {
     display: flex;
     gap: 1rem;
     align-items: center;
-    padding: 1rem 1.25rem;
+    padding: 1.2rem;
     background: var(--bg-card);
     border: var(--glass-border);
     border-radius: var(--radius-md);
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.8rem;
     transition: all var(--transition-normal);
+    position: relative;
 }
 
-.preference-item:hover {
+.cutoff-item-card:hover {
     transform: translateX(4px);
-    box-shadow: var(--shadow-card);
+    box-shadow: var(--shadow-card), var(--shadow-glow);
+    border-color: rgba(0, 212, 255, 0.2);
 }
 
-.preference-rank {
-    font-family: var(--font-heading);
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--text-muted);
-    min-width: 40px;
-    text-align: center;
-}
-
-.preference-info {
-    flex: 1;
-}
-
-.preference-info .pref-college {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    font-size: 0.95rem;
-}
-
-.preference-info .pref-branch {
-    font-size: 0.82rem;
-    color: var(--text-secondary);
-}
-
-.preference-info .pref-reason {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    margin-top: 0.2rem;
-}
-
-.preference-strategy {
-    text-align: center;
-    padding: 1rem;
+.cutoff-header-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
     margin-bottom: 1.5rem;
-    background: var(--bg-card);
-    border: var(--glass-border);
-    border-radius: var(--radius-md);
-    color: var(--text-secondary);
 }
 
 /* ─── Home / About Section ───────────────────────── */
@@ -892,13 +863,13 @@
     box-shadow: 0 0 20px rgba(0, 200, 83, 0.2);
 }
 
-.preference-accent {
+.cutoff-accent {
     background: rgba(168, 85, 247, 0.1);
     border: 1px solid rgba(168, 85, 247, 0.15);
     color: var(--purple);
 }
 
-.home-feature-card:hover .preference-accent {
+.home-feature-card:hover .cutoff-accent {
     box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
 }
 
@@ -1176,7 +1147,7 @@
 @media (max-width: 900px) {
 
     .prediction-layout,
-    .preference-layout {
+    .cutoff-layout {
         grid-template-columns: 1fr;
     }
 

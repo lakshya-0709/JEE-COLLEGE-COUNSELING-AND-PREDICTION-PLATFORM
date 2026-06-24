@@ -2,16 +2,7 @@
    Utility Functions
    ═══════════════════════════════════════════════════ */
 
-const TOTAL_CANDIDATES_MAIN = 1550000;
-const TOTAL_CANDIDATES_ADV = 250000;
 
-/**
- * Convert percentile to approximate rank
- */
-function percentileToRank(percentile, exam = 'main') {
-    const total = exam === 'main' ? TOTAL_CANDIDATES_MAIN : TOTAL_CANDIDATES_ADV;
-    return Math.max(1, Math.round((100 - percentile) / 100 * total) + 1);
-}
 
 /**
  * Format rank with commas
@@ -111,3 +102,11 @@ const INDIAN_STATES = [
     "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana",
     "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
 ];
+
+/**
+ * Return sorted numeric keys from two objects (for chart year alignment)
+ */
+function sortedUniqueKeys(obj1, obj2) {
+    const keys = new Set([...Object.keys(obj1), ...Object.keys(obj2)]);
+    return Array.from(keys).map(Number).sort((a, b) => a - b);
+}

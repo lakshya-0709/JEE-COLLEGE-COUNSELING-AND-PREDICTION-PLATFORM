@@ -9,6 +9,10 @@ import os
 from app.config import CUTOFF_DATA_PATH, METADATA_PATH
 
 
+# Last round number per year (JoSAA uses 6 rounds for 2021-2023, 5 for 2024)
+LAST_ROUNDS = {2021: 6, 2022: 6, 2023: 6, 2024: 5}
+
+
 class DataStore:
     """In-memory data store for cutoff data."""
 
@@ -42,11 +46,7 @@ class DataStore:
 
     def get_last_round_data(self) -> list[dict]:
         """Get only the last round data per year (for predictions)."""
-        last_rounds = {2021: 6, 2022: 6, 2023: 6, 2024: 5}
-        return [
-            r for r in self.cutoffs
-            if r["round"] == last_rounds.get(r["year"], 6)
-        ]
+        return [r for r in self.cutoffs if r["round"] == LAST_ROUNDS.get(r["year"], 6)]
 
     def query(self, **filters) -> list[dict]:
         """Query cutoff data with filters."""
@@ -78,8 +78,10 @@ class DataStore:
                 })
         return sorted(institutes, key=lambda x: x["institute_short"])
 
-    def get_branches(self) -> list[str]:
-        """Get unique normalized branch names."""
+    def get_branches(self, institute_types: list[str] = None) -> list[str]:
+        """Get unique normalized branch names, optionally filtered by institute type."""
+        if institute_types:
+            return sorted(set(r["branch_short"] for r in self.cutoffs if r["institute_type"] in institute_types))
         return sorted(set(r["branch_short"] for r in self.cutoffs))
 
     def get_programs_for_institute(self, institute: str) -> list[dict]:
@@ -101,21 +103,14 @@ class DataStore:
                   seat_type: str = "OPEN", gender: str = "Gender-Neutral",
                   quota: str = "AI") -> list[dict]:
         """Get year-wise cutoff trend for a specific combo."""
-        last_rounds = {2021: 6, 2022: 6, 2023: 6, 2024: 5}
-        results = []
-        for r in self.cutoffs:
-            if (r["institute"] == institute and
-                r["program"] == program and
-                r["seat_type"] == seat_type and
-                r["gender"] == gender and
-                r["quota"] == quota and
-                r["round"] == last_rounds.get(r["year"], 6)):
-                results.append({
-                    "year": r["year"],
-                    "opening_rank": r["opening_rank"],
-                    "closing_rank": r["closing_rank"],
-                    "round": r["round"],
-                })
+        results = [
+            {"year": r["year"], "opening_rank": r["opening_rank"],
+             "closing_rank": r["closing_rank"], "round": r["round"]}
+            for r in self.cutoffs
+            if (r["institute"] == institute and r["program"] == program and
+                r["seat_type"] == seat_type and r["gender"] == gender and
+                r["quota"] == quota and r["round"] == LAST_ROUNDS.get(r["year"], 6))
+        ]
         return sorted(results, key=lambda x: x["year"])
 
     def search_institutes(self, query: str) -> list[dict]:

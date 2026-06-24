@@ -228,6 +228,17 @@ a:hover {
     color: var(--text-muted);
 }
 
+/* Hide number input spinners */
+.form-input::-webkit-outer-spin-button,
+.form-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.form-input[type=number] {
+    -moz-appearance: textfield;
+}
+
 select.form-input {
     cursor: pointer;
     appearance: none;
@@ -242,11 +253,16 @@ select[multiple].form-input {
     min-height: 100px;
     background-image: none;
     padding-right: 1rem;
+    overflow-x: hidden; /* Hide messy horizontal scrollbar */
 }
 
 select[multiple].form-input option {
     padding: 0.4rem 0.5rem;
     border-bottom: 1px solid var(--border-color);
+    font-size: 0.85rem; /* Slightly smaller text size to fit more content */
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 select[multiple].form-input option:checked {

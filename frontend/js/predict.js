@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const examMainBtn = document.getElementById('examMainBtn');
     const examAdvBtn = document.getElementById('examAdvBtn');
     const inputRank = document.getElementById('inputRank');
-    const inputPercentile = document.getElementById('inputPercentile');
     const selectCategory = document.getElementById('selectCategory');
     const selectGender = document.getElementById('selectGender');
     const selectState = document.getElementById('selectState');
@@ -45,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPredictions = { safe: [], moderate: [], dream: [] };
     let activeTab = 'safe';
     let modalChartInstance = null;
+    let showAllTabsMap = { safe: false, moderate: false, dream: false };
 
     // Initialize Page
     initPredictForm();
@@ -66,8 +66,15 @@ document.addEventListener('DOMContentLoaded', () => {
         examMainBtn.addEventListener('click', () => setExamType('main'));
         examAdvBtn.addEventListener('click', () => setExamType('advanced'));
 
-        // Load branches autocomplete
-        loadBranches();
+        // Initialize the form state based on the default exam type
+        setExamType('main');
+
+        // Reload branches when institute type checkboxes change
+        [chkIIT, chkNIT, chkIIIT, chkGFTI].forEach(chk => {
+            if (chk) {
+                chk.addEventListener('change', loadBranches);
+            }
+        });
 
         // Sync Category and update labels
         if (selectCategory) {
@@ -132,33 +139,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function updateCheckbox(chk, checked, disabled) {
+        if (!chk) return;
+        chk.checked = checked;
+        chk.disabled = disabled;
+        chk.parentElement.style.opacity = disabled ? '0.5' : '1';
+        chk.parentElement.style.cursor = disabled ? 'not-allowed' : 'pointer';
+    }
+
     function setExamType(type) {
         currentExamType = type;
-        if (type === 'main') {
-            examMainBtn.classList.add('active');
-            examAdvBtn.classList.remove('active');
-            chkIIT.checked = false;
-            chkNIT.checked = true;
-            chkIIIT.checked = true;
-            chkGFTI.checked = true;
-        } else {
-            examMainBtn.classList.remove('active');
-            examAdvBtn.classList.add('active');
-            chkIIT.checked = true;
-            chkNIT.checked = false;
-            chkIIIT.checked = false;
-            chkGFTI.checked = false;
-        }
+        const isMain = type === 'main';
+        
+        examMainBtn.classList.toggle('active', isMain);
+        examAdvBtn.classList.toggle('active', !isMain);
+
+        updateCheckbox(chkIIT, !isMain, isMain);
+        updateCheckbox(chkNIT, isMain, !isMain);
+        updateCheckbox(chkIIIT, isMain, !isMain);
+        updateCheckbox(chkGFTI, isMain, !isMain);
+
+        loadBranches();
     }
 
     async function loadBranches() {
         try {
-            const branches = await api.getBranches();
+            const selectedTypes = [];
+            if (chkIIT && chkIIT.checked) selectedTypes.push('IIT');
+            if (chkNIT && chkNIT.checked) selectedTypes.push('NIT');
+            if (chkIIIT && chkIIIT.checked) selectedTypes.push('IIIT');
+            if (chkGFTI && chkGFTI.checked) selectedTypes.push('GFTI');
+
+            const branches = await api.getBranches(selectedTypes);
             branchSelect.innerHTML = '<option value="" disabled selected>Select preferred branches...</option>';
             branches.forEach(branch => {
                 const opt = document.createElement('option');
                 opt.value = branch;
                 opt.textContent = branch;
+                opt.title = branch; // Add hover tooltip with full branch name
                 branchSelect.appendChild(opt);
             });
         } catch (err) {
@@ -185,10 +203,9 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
 
         const rankVal = inputRank.value ? parseInt(inputRank.value, 10) : null;
-        const percentileVal = inputPercentile.value ? parseFloat(inputPercentile.value) : null;
 
-        if (!rankVal && !percentileVal) {
-            showToast('Please enter either Rank or Percentile!', 'error');
+        if (!rankVal) {
+            showToast('Please enter your Rank!', 'error');
             return;
         }
 
@@ -217,9 +234,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const payload = {
             jee_main_rank: currentExamType === 'main' ? rankVal : null,
-            jee_main_percentile: currentExamType === 'main' ? percentileVal : null,
+            jee_main_percentile: null,
             jee_advanced_rank: currentExamType === 'advanced' ? rankVal : null,
-            jee_advanced_percentile: currentExamType === 'advanced' ? percentileVal : null,
+            jee_advanced_percentile: null,
             category: selectCategory.value,
             gender: selectGender.value,
             home_state: selectState.value || null,
@@ -230,6 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const data = await api.predictColleges(payload);
             currentPredictions = data;
+            showAllTabsMap = { safe: false, moderate: false, dream: false };
 
             // Format results panel
             safeCount.textContent = data.safe.length;
@@ -305,10 +323,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        cards.forEach((item, index) => {
+        const showAll = showAllTabsMap[activeTab];
+        const limit = showAll ? cards.length : 15;
+        const visibleCards = cards.slice(0, limit);
+
+        visibleCards.forEach((item, index) => {
             const card = document.createElement('div');
             card.className = 'college-card glass-card fade-in';
-            card.style.animationDelay = `${index * 50}ms`;
+            card.style.animationDelay = `${index * 30}ms`;
 
             const rankDiffClass = item.rank_difference >= 0 ? 'text-safe' : 'text-danger';
             const rankDiffText = item.rank_difference >= 0
@@ -421,6 +443,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
             resultsCards.appendChild(card);
         });
+
+        // Add Show More button if there are more cards
+        if (cards.length > limit) {
+            const showMoreContainer = document.createElement('div');
+            showMoreContainer.className = 'show-more-container';
+            showMoreContainer.style.textAlign = 'center';
+            showMoreContainer.style.marginTop = '1.5rem';
+            showMoreContainer.style.marginBottom = '1.5rem';
+
+            const showMoreBtn = document.createElement('button');
+            showMoreBtn.className = 'submit-btn show-more-btn';
+            showMoreBtn.style.width = 'auto';
+            showMoreBtn.style.padding = '0.75rem 2rem';
+            showMoreBtn.style.display = 'inline-block';
+            showMoreBtn.innerHTML = `Show More (${cards.length - limit} remaining)`;
+
+            showMoreBtn.addEventListener('click', () => {
+                showAllTabsMap[activeTab] = true;
+                renderActiveCards();
+            });
+
+            showMoreContainer.appendChild(showMoreBtn);
+            resultsCards.appendChild(showMoreContainer);
+        }
     }
 
     // Modal Trend Logic

@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import CORS_ORIGINS
 from app.database import data_store
 from app.services.prediction import prediction_service
-from app.routes import predict, trends, compare, preference, colleges
+from app.routes import predict, trends, compare, colleges
 
 
 @asynccontextmanager
@@ -50,7 +50,6 @@ app.add_middleware(
 app.include_router(predict.router, prefix="/api", tags=["Prediction"])
 app.include_router(trends.router, prefix="/api", tags=["Trends"])
 app.include_router(compare.router, prefix="/api", tags=["Compare"])
-app.include_router(preference.router, prefix="/api", tags=["Preference List"])
 app.include_router(colleges.router, prefix="/api", tags=["Colleges"])
 
 

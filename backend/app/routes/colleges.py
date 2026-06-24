@@ -26,9 +26,12 @@ async def get_programs(
 
 
 @router.get("/colleges/branches")
-async def get_branches():
+async def get_branches(
+    types: str = Query(None, description="Comma-separated institute types to filter by (e.g., IIT,NIT)")
+):
     """Get all available normalized branch names."""
-    return data_store.get_branches()
+    type_list = [t.strip() for t in types.split(",")] if types else None
+    return data_store.get_branches(type_list)
 
 
 @router.get("/colleges/metadata")

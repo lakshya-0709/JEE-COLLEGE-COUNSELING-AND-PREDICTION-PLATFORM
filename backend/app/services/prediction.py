@@ -7,7 +7,7 @@ import os
 import joblib
 import pandas as pd
 import numpy as np
-from app.config import MODEL_PATH, PREPROCESSOR_PATH, SAFE_THRESHOLD, MODERATE_HIGH, TOTAL_JEE_MAIN_CANDIDATES, TOTAL_JEE_ADVANCED_CANDIDATES
+from app.config import MODEL_PATH, PREPROCESSOR_PATH, SAFE_THRESHOLD, MODERATE_HIGH
 from app.database import data_store
 
 
@@ -32,11 +32,6 @@ class PredictionService:
         else:
             print(f"WARNING: ML model not found at {MODEL_PATH}. Using fallback prediction.")
 
-    def percentile_to_rank(self, percentile: float, exam: str = "main") -> int:
-        """Convert percentile to approximate rank."""
-        total = TOTAL_JEE_MAIN_CANDIDATES if exam == "main" else TOTAL_JEE_ADVANCED_CANDIDATES
-        rank = int((100 - percentile) / 100 * total) + 1
-        return max(1, rank)
 
     def predict_closing_rank(self, institute_short: str, branch_short: str,
                               seat_type: str, gender: str, quota: str,
@@ -66,8 +61,10 @@ class PredictionService:
             print(f"ML prediction error for {institute_short}/{branch_short}: {e}")
             return None
 
-    def classify_chance(self, student_rank: int, closing_rank: int) -> str:
+    def classify_chance(self, student_rank: int | None, closing_rank: int) -> str:
         """Classify admission chance as Safe, Moderate, or Dream."""
+        if student_rank is None:
+            return "Info"
         ratio = student_rank / closing_rank
         if ratio < SAFE_THRESHOLD:
             return "Safe"
@@ -166,7 +163,7 @@ class PredictionService:
                 print(f"ML batch prediction error: {e}")
 
         # Build predictions
-        results = {"safe": [], "moderate": [], "dream": []}
+        results = {"safe": [], "moderate": [], "dream": [], "info": []}
 
         for key, combo in combos.items():
             meta = combo["meta"]
@@ -222,11 +219,11 @@ class PredictionService:
 
             # Only show colleges where the student has at least a dream chance
             # Dream threshold: student_rank < 1.35 * closing_rank
-            if student_rank > reference_rank * 1.35:
+            if student_rank is not None and student_rank > reference_rank * 1.35:
                 continue
 
             chance = self.classify_chance(student_rank, reference_rank)
-            rank_diff = reference_rank - student_rank
+            rank_diff = reference_rank - student_rank if student_rank is not None else 0
 
             prediction = {
                 "institute": meta["institute"],
@@ -244,16 +241,16 @@ class PredictionService:
                 "closing_rank_2022": years.get(2022),
                 "closing_rank_2021": years.get(2021),
                 "predicted_closing_2026": reference_rank,
-                "your_rank": student_rank,
+                "your_rank": student_rank if student_rank is not None else 0,
                 "rank_difference": rank_diff,
-                "confidence_score": min(1.0, max(0.0, 1 - abs(student_rank - reference_rank) / reference_rank)),
+                "confidence_score": 1.0 if student_rank is None else min(1.0, max(0.0, 1 - abs(student_rank - reference_rank) / reference_rank)),
             }
 
             results[chance.lower()].append(prediction)
 
-        # Sort each category
+        # Sort each category (best college quality first - lower cutoff rank number is better)
         for cat in results:
-            results[cat].sort(key=lambda x: x["rank_difference"], reverse=True)
+            results[cat].sort(key=lambda x: x["predicted_closing_2026"])
 
         return results
 

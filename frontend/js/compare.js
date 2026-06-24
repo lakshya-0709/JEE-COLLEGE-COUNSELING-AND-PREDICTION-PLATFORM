@@ -334,8 +334,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function sortedUniqueKeys(obj1, obj2) {
-        const keys = new Set([...Object.keys(obj1), ...Object.keys(obj2)]);
-        return Array.from(keys).map(Number).sort((a, b) => a - b);
-    }
 });

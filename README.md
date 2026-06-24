@@ -59,7 +59,7 @@ c:\Users\VICTUS\Desktop\first\
 │       ├── predict.js              # Prediction dashboard logic and modals
 │       ├── trends.js               # Cutoff trends dashboard with line charts
 │       ├── compare.js              # College-to-college side-by-side comparisons
-│       └── utils.js                # Utilities (percentile calculations, counters, toasts)
+│       └── utils.js                # Utilities (counters, toasts, state list)
 └── README.md                       # Documentation and startup guide
 ```
 
@@ -136,7 +136,7 @@ Since the frontend is built using pure modern Vanilla HTML, CSS, and JS (SPA arc
 FastAPI automatically generates interactive Swagger API docs at `http://localhost:8000/docs`.
 
 ### Key Endpoints:
-* **`POST /api/predict`** - Takes rank/percentile, category, gender, quota, preferred branches, and returns categorized list of Safe, Moderate, and Dream admissions.
+* **`POST /api/predict`** - Takes rank, category, gender, quota, preferred branches, and returns categorized list of Safe, Moderate, and Dream admissions.
 * **`GET /api/trends`** - Takes institute name, program, seat type, and quota, and returns 4-year cutoff records.
 * **`POST /api/compare`** - Compares two programs side by side, returning cutoff comparison arrays and a text recommendation.
 * **`POST /api/preference-list`** - Generates an optimized list of choices based on candidate rank and preferences.

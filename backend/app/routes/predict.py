@@ -20,18 +20,12 @@ async def predict_colleges(request: PredictionRequest):
     if request.jee_advanced_rank:
         student_rank = request.jee_advanced_rank
         exam_type = "JEE Advanced"
-    elif request.jee_advanced_percentile:
-        student_rank = prediction_service.percentile_to_rank(request.jee_advanced_percentile, "advanced")
-        exam_type = "JEE Advanced"
     elif request.jee_main_rank:
         student_rank = request.jee_main_rank
         exam_type = "JEE Main"
-    elif request.jee_main_percentile:
-        student_rank = prediction_service.percentile_to_rank(request.jee_main_percentile, "main")
-        exam_type = "JEE Main"
 
     if student_rank is None:
-        raise HTTPException(status_code=400, detail="Please provide either JEE Main or JEE Advanced rank/percentile")
+        raise HTTPException(status_code=400, detail="Please provide either JEE Main or JEE Advanced rank")
 
     # Set default institute types based on exam
     institute_types = request.institute_types

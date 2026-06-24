@@ -113,22 +113,22 @@
 .result-card:nth-child(9) { animation-delay: 0.45s; }
 .result-card:nth-child(10) { animation-delay: 0.5s; }
 
-/* Preference list staggered */
-.preference-item {
+/* Cutoff Lookup staggered entrance */
+.cutoff-item-card {
     animation: slideInLeft 0.4s ease forwards;
     opacity: 0;
 }
 
-.preference-item:nth-child(1) { animation-delay: 0.05s; }
-.preference-item:nth-child(2) { animation-delay: 0.1s; }
-.preference-item:nth-child(3) { animation-delay: 0.15s; }
-.preference-item:nth-child(4) { animation-delay: 0.2s; }
-.preference-item:nth-child(5) { animation-delay: 0.25s; }
-.preference-item:nth-child(6) { animation-delay: 0.3s; }
-.preference-item:nth-child(7) { animation-delay: 0.35s; }
-.preference-item:nth-child(8) { animation-delay: 0.4s; }
-.preference-item:nth-child(9) { animation-delay: 0.45s; }
-.preference-item:nth-child(10) { animation-delay: 0.5s; }
+.cutoff-item-card:nth-child(1) { animation-delay: 0.05s; }
+.cutoff-item-card:nth-child(2) { animation-delay: 0.1s; }
+.cutoff-item-card:nth-child(3) { animation-delay: 0.15s; }
+.cutoff-item-card:nth-child(4) { animation-delay: 0.2s; }
+.cutoff-item-card:nth-child(5) { animation-delay: 0.25s; }
+.cutoff-item-card:nth-child(6) { animation-delay: 0.3s; }
+.cutoff-item-card:nth-child(7) { animation-delay: 0.35s; }
+.cutoff-item-card:nth-child(8) { animation-delay: 0.4s; }
+.cutoff-item-card:nth-child(9) { animation-delay: 0.45s; }
+.cutoff-item-card:nth-child(10) { animation-delay: 0.5s; }
 
 /* ─── Hero Animations ────────────────────────────── */
 .hero-badge {

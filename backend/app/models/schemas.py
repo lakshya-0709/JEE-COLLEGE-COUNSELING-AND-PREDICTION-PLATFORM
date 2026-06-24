@@ -7,9 +7,7 @@ from typing import Optional
 class PredictionRequest(BaseModel):
     """Student input for college prediction."""
     jee_main_rank: Optional[int] = Field(None, description="JEE Main AIR rank")
-    jee_main_percentile: Optional[float] = Field(None, description="JEE Main percentile (0-100)")
     jee_advanced_rank: Optional[int] = Field(None, description="JEE Advanced AIR rank")
-    jee_advanced_percentile: Optional[float] = Field(None, description="JEE Advanced percentile (0-100)")
     category: str = Field("OPEN", description="Category: OPEN, EWS, OBC-NCL, SC, ST")
     gender: str = Field("Gender-Neutral", description="Gender: Gender-Neutral or Female-only (including Supernumerary)")
     home_state: Optional[str] = Field(None, description="Home state for HS quota")
@@ -67,16 +65,21 @@ class TrendData(BaseModel):
 
 
 class TrendResponse(BaseModel):
-    """Response with multi-year cutoff trend."""
+    """Response with multi-year cutoff trend — used by both Cutoff Trends and Cutoff Lookup."""
     institute: str
     institute_short: str
+    institute_type: str = ""        # IIT, NIT, IIIT, GFTI
+    state: str = ""                 # State where institute is located
     program: str
     branch_short: str
     seat_type: str
     gender: str
     quota: str
     trends: list[TrendData] = []
-    trend_direction: str = ""  # "getting_harder", "getting_easier", "stable"
+    trend_direction: str = ""       # "getting_harder", "getting_easier", "stable"
+    predicted_closing_2026: Optional[int] = None
+    predicted_range_min: Optional[int] = None
+    predicted_range_max: Optional[int] = None
 
 
 class CompareRequest(BaseModel):
@@ -108,41 +111,3 @@ class CompareResponse(BaseModel):
     college_a: CompareItem
     college_b: CompareItem
     recommendation: str = ""
-
-
-class PreferenceListRequest(BaseModel):
-    """Request for generating a preference/choice filling list."""
-    jee_main_rank: Optional[int] = None
-    jee_main_percentile: Optional[float] = None
-    jee_advanced_rank: Optional[int] = None
-    jee_advanced_percentile: Optional[float] = None
-    category: str = "OPEN"
-    gender: str = "Gender-Neutral"
-    home_state: Optional[str] = None
-    preferred_branches: list[str] = Field(default_factory=list)
-    institute_types: list[str] = Field(default_factory=list)
-    branch_priority: str = Field("balanced", description="branch_first, college_first, or balanced")
-    risk_tolerance: str = Field("balanced", description="safe, balanced, or aggressive")
-
-
-class PreferenceItem(BaseModel):
-    """A single item in the preference list."""
-    rank_order: int
-    institute: str
-    institute_short: str
-    institute_type: str
-    state: str
-    program: str
-    branch_short: str
-    chance_category: str
-    closing_rank_latest: Optional[int] = None
-    your_rank: int
-    reason: str = ""
-
-
-class PreferenceListResponse(BaseModel):
-    """Response with optimized preference list."""
-    your_rank: int
-    total_choices: int
-    strategy: str
-    preference_list: list[PreferenceItem] = []

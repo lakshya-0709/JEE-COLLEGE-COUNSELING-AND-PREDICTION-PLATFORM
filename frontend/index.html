@@ -40,7 +40,7 @@
                 <a href="#predict" class="nav-link" data-section="predict">Predict</a>
                 <a href="#trends" class="nav-link" data-section="trends">Trends</a>
                 <a href="#compare" class="nav-link" data-section="compare">Compare</a>
-                <a href="#preference" class="nav-link" data-section="preference">Preference List</a>
+                <a href="#preference" class="nav-link" data-section="preference">Cutoff Lookup</a>
             </div>
             <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
                 <span></span><span></span><span></span>
@@ -107,7 +107,7 @@
                         </svg>
                     </div>
                     <h3 class="feature-title">College Prediction</h3>
-                    <p class="feature-desc">Enter your JEE rank or percentile and instantly discover which colleges you can get into — categorized as Safe, Moderate, or Dream.</p>
+                    <p class="feature-desc">Enter your JEE rank and instantly discover which colleges you can get into — categorized as Safe, Moderate, or Dream.</p>
                     <span class="feature-cta">Try Prediction <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                 </a>
 
@@ -135,16 +135,16 @@
                     <span class="feature-cta">Compare Now <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                 </a>
 
-                <!-- Feature 4: Preference List -->
+                <!-- Feature 4: Cutoff Lookup -->
                 <a href="#preference" class="home-feature-card reveal">
-                    <div class="feature-icon-wrap preference-accent">
+                    <div class="feature-icon-wrap cutoff-accent">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
                         </svg>
                     </div>
-                    <h3 class="feature-title">Preference List</h3>
-                    <p class="feature-desc">Generate an optimized JoSAA choice-filling order based on your priorities — branch-first, college-first, or balanced strategy.</p>
-                    <span class="feature-cta">Generate List <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+                    <h3 class="feature-title">Cutoff Lookup</h3>
+                    <p class="feature-desc">Look up closing ranks for any college and branch — with ML-predicted 2026 expected range and historical cutoff trends.</p>
+                    <span class="feature-cta">Lookup Cutoffs <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                 </a>
             </div>
         </div>
@@ -183,18 +183,11 @@
                             </div>
                         </div>
 
-                        <!-- Rank / Percentile -->
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label" for="inputRank" id="rankLabel">Rank (AIR)</label>
-                                <input type="number" class="form-input" id="inputRank" placeholder="e.g. 15000" min="1">
-                                <small class="form-hint" id="rankHint">Enter Common Rank List (CRL) for General.</small>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="inputPercentile">OR Percentile</label>
-                                <input type="number" class="form-input" id="inputPercentile" placeholder="e.g. 98.5"
-                                    min="0" max="100" step="0.01">
-                            </div>
+                        <!-- Rank -->
+                        <div class="form-group">
+                            <label class="form-label" for="inputRank" id="rankLabel">Rank (AIR)</label>
+                            <input type="number" class="form-input" id="inputRank" placeholder="e.g. 15000" min="1" required>
+                            <small class="form-hint" id="rankHint">Enter Common Rank List (CRL) for General.</small>
                         </div>
 
                         <!-- Category & Gender -->
@@ -426,9 +419,8 @@
     </section>
     </div><!-- /COMPARE PAGE -->
 
-    <!-- ═══ PREFERENCE PAGE ═══ -->
+    <!-- ═══ CUTOFF LOOKUP PAGE ═══ -->
     <div class="app-page" data-page="preference">
-    <!-- Preference List Section -->
     <section class="section" id="preference">
         <div class="container">
             <a href="#home" class="back-to-home">
@@ -438,23 +430,31 @@
         </div>
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Preference List Generator</h2>
-                <p class="section-subtitle">Get your optimized JoSAA choice-filling order</p>
+                <h2 class="section-title">Cutoff Lookup</h2>
+                <p class="section-subtitle">Look up closing ranks for any college and branch</p>
             </div>
 
-            <div class="preference-layout initial-state" id="preferenceLayout">
+            <div class="cutoff-layout initial-state" id="cutoffLayout">
                 <div class="glass-card form-card">
-                    <h3 class="card-title">Configure Your List</h3>
-                    <form id="preferenceForm">
+                    <h3 class="card-title">Select College & Branch</h3>
+                    <form id="cutoffForm">
+                        <div class="form-group" style="position:relative;">
+                            <label class="form-label" for="cutoffInstitute">Institute / College</label>
+                            <input type="text" class="form-input" id="cutoffInstitute" placeholder="Type to search college..." autocomplete="off">
+                            <div class="autocomplete-dropdown" id="cutoffInstituteDropdown"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="cutoffProgram">Program / Branch</label>
+                            <select class="form-input" id="cutoffProgram">
+                                <option value="">Select institute first</option>
+                            </select>
+                        </div>
+
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label" for="prefRank" id="prefRankLabel">JEE Main Rank (AIR)</label>
-                                <input type="number" class="form-input" id="prefRank" placeholder="e.g. 15000" min="1">
-                                <small class="form-hint" id="prefRankHint">Enter Common Rank List (CRL) for General.</small>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="prefCategory">Category</label>
-                                <select class="form-input" id="prefCategory">
+                                <label class="form-label" for="cutoffCategory">Seat Type (Category)</label>
+                                <select class="form-input" id="cutoffCategory">
                                     <option value="OPEN">General (OPEN)</option>
                                     <option value="EWS">EWS</option>
                                     <option value="OBC-NCL">OBC-NCL</option>
@@ -462,47 +462,40 @@
                                     <option value="ST">ST</option>
                                 </select>
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Priority</label>
-                            <div class="toggle-group">
-                                <button type="button" class="toggle-btn" data-val="branch_first"
-                                    id="prefBranchFirst">Branch First</button>
-                                <button type="button" class="toggle-btn active" data-val="balanced"
-                                    id="prefBalanced">Balanced</button>
-                                <button type="button" class="toggle-btn" data-val="college_first"
-                                    id="prefCollegeFirst">College First</button>
+                            <div class="form-group">
+                                <label class="form-label" for="cutoffGender">Gender</label>
+                                <select class="form-input" id="cutoffGender">
+                                    <option value="Gender-Neutral">Male / Gender-Neutral</option>
+                                    <option value="Female-only (including Supernumerary)">Female-only</option>
+                                </select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Risk Tolerance</label>
-                            <div class="toggle-group">
-                                <button type="button" class="toggle-btn" data-val="safe" id="prefSafe">Safe</button>
-                                <button type="button" class="toggle-btn active" data-val="balanced"
-                                    id="prefRiskBalanced">Balanced</button>
-                                <button type="button" class="toggle-btn" data-val="aggressive"
-                                    id="prefAggressive">Aggressive</button>
-                            </div>
+                            <label class="form-label" for="cutoffQuota">Quota</label>
+                            <select class="form-input" id="cutoffQuota">
+                                <option value="AI">All India (AI)</option>
+                                <option value="HS">Home State (HS)</option>
+                                <option value="OS">Other State (OS)</option>
+                            </select>
                         </div>
 
-                        <button type="submit" class="submit-btn" id="prefSubmitBtn">
-                            <span class="btn-text">Generate Preference List</span>
+                        <button type="submit" class="submit-btn" id="cutoffSubmitBtn">
+                            <span class="btn-text">Find Cutoff / Closing Ranks</span>
                             <span class="btn-loader" style="display:none;">
-                                <span class="spinner"></span> Generating...
+                                <span class="spinner"></span> Querying...
                             </span>
                         </button>
                     </form>
                 </div>
 
-                <div class="preference-results" id="preferenceResults" style="display:none;">
+                <div class="cutoff-results" id="cutoffResults" style="display:none;">
                     <!-- Filled by JS -->
                 </div>
             </div>
         </div>
     </section>
-    </div><!-- /PREFERENCE PAGE -->
+    </div><!-- /CUTOFF LOOKUP PAGE -->
 
     <!-- Footer -->
     <footer class="footer">
@@ -519,7 +512,7 @@
                     <a href="#predict">College Prediction</a>
                     <a href="#trends">Cutoff Trends</a>
                     <a href="#compare">College Comparison</a>
-                    <a href="#preference">Preference List</a>
+                    <a href="#preference">Cutoff Lookup</a>
                 </div>
                 <div class="footer-links">
                     <h4>Data Source</h4>
@@ -555,7 +548,7 @@
     <script src="js/predict.js"></script>
     <script src="js/trends.js"></script>
     <script src="js/compare.js"></script>
-    <script src="js/preference.js"></script>
+    <script src="js/cutoff_lookup.js"></script>
     <script src="js/app.js"></script>
 </body>
 
