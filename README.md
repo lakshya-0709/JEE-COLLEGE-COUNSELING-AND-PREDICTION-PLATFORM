@@ -1,28 +1,22 @@
-# JEE College Counseling & Prediction Platform 🎓
+# JEE College Counseling & Prediction Platform
 
-ML-powered full-stack web app for JEE candidates — predicts 2026 admission chances using real JoSAA cutoff data (2021–2024) with confidence ranges, trend charts, and college comparisons.
+ML-powered web app for JEE candidates — predicts 2026 admission chances using JoSAA cutoff data (2021–2024).
 
 ---
 
 ## Features
 
-| Feature | Description |
-|---|---|
-| **ML Prediction** | Gradient Boosting model on 81K+ records — groups results into Safe / Moderate / Dream with expected rank range |
-| **Cutoff Trends** | 4-year interactive charts with trend direction (harder / easier / stable) and 2026 ML forecast |
-| **College Comparison** | Side-by-side dual chart + metrics table + automated recommendation |
-| **Cutoff Lookup** | Search historical closing ranks by college, branch, category, gender, and quota |
-
----
+- College Prediction — Gradient Boosting model on 81K+ records, groups results as Safe / Moderate / Dream with expected rank range
+- Cutoff Trends — 4-year charts with trend direction and 2026 forecast
+- College Comparison — Side-by-side cutoff chart + metrics + recommendation
+- Cutoff Lookup — Search historical closing ranks by college, branch, category, gender, quota
 
 ## Tech Stack
 
-| Layer | Tools |
-|---|---|
-| Backend | Python, FastAPI, Uvicorn |
-| ML | scikit-learn (Gradient Boosting), pandas, NumPy, joblib |
-| Frontend | Vanilla HTML5 / CSS3 / JavaScript (ES6+), Chart.js |
-| Data | JoSAA Excel → JSON (81,131 records, 2021–2024) |
+- Backend: Python, FastAPI, Uvicorn
+- ML: scikit-learn (Gradient Boosting), pandas, NumPy, joblib
+- Frontend: HTML, CSS, JavaScript, Chart.js
+- Data: JoSAA Excel files → JSON (81,131 records, 2021–2024)
 
 ---
 
@@ -32,39 +26,39 @@ ML-powered full-stack web app for JEE candidates — predicts 2026 admission cha
 first/
 ├── backend/
 │   ├── app/
-│   │   ├── main.py              # FastAPI app — mounts all routes
-│   │   ├── config.py            # Paths, thresholds, CORS config
-│   │   ├── database.py          # In-memory data store + query helpers
-│   │   ├── models/schemas.py    # Pydantic request/response schemas
+│   │   ├── main.py              # FastAPI app
+│   │   ├── config.py            # Paths, thresholds, CORS
+│   │   ├── database.py          # In-memory data store
+│   │   ├── models/schemas.py    # Pydantic schemas
 │   │   ├── routes/
 │   │   │   ├── predict.py       # POST /api/predict
 │   │   │   ├── trends.py        # GET  /api/trends
 │   │   │   ├── compare.py       # POST /api/compare
 │   │   │   └── colleges.py      # GET  /api/colleges/*
 │   │   └── services/
-│   │       └── prediction.py    # ML batch inference + guardrails
+│   │       └── prediction.py    # ML inference + guardrails
 │   ├── ml/
-│   │   ├── train_model.py       # Training script
-│   │   ├── model.joblib         # Trained model
-│   │   └── preprocessor.joblib  # Ordinal encoder
+│   │   ├── train_model.py
+│   │   ├── model.joblib
+│   │   └── preprocessor.joblib
 │   └── data/
-│       ├── process_data.py      # Excel → JSON pipeline
+│       ├── process_data.py
 │       ├── cutoffs_processed.json
 │       └── metadata.json
 ├── frontend/
-│   ├── index.html               # SPA shell
+│   ├── index.html
 │   ├── css/
-│   │   ├── index.css            # Design tokens, dark theme
-│   │   ├── components.css       # UI components
-│   │   └── animations.css       # Keyframes, micro-interactions
+│   │   ├── index.css
+│   │   ├── components.css
+│   │   └── animations.css
 │   └── js/
-│       ├── utils.js             # Shared helpers (formatRank, toast, debounce)
-│       ├── api.js               # Centralized fetch client
-│       ├── app.js               # Router, navbar, particle canvas
-│       ├── predict.js           # Prediction page logic
-│       ├── trends.js            # Trends chart + table
-│       ├── compare.js           # Comparison chart + metrics
-│       └── cutoff_lookup.js     # Cutoff Lookup search
+│       ├── utils.js
+│       ├── api.js
+│       ├── app.js
+│       ├── predict.js
+│       ├── trends.js
+│       ├── compare.js
+│       └── cutoff_lookup.js
 └── README.md
 ```
 
@@ -72,55 +66,53 @@ first/
 
 ## Setup
 
-### 1. Environment
+1. Install dependencies
 ```powershell
 python -m venv venv
 .\venv\Scripts\Activate
 pip install -r backend/requirements.txt
 ```
 
-### 2. Process Data & Train Model
-> Skip if `cutoffs_processed.json` and `model.joblib` already exist.
+2. Process data and train model (skip if already done)
 ```powershell
 python -X utf8 backend/data/process_data.py
 python -X utf8 backend/ml/train_model.py
 ```
 
-### 3. Start Backend
+3. Start backend
 ```powershell
 uvicorn backend.app.main:app --reload --port 8000
 ```
-API → `http://localhost:8000` | Swagger docs → `http://localhost:8000/docs`
 
-### 4. Open Frontend
-Open `frontend/index.html` directly in browser or use VS Code Live Server.
+4. Open frontend
+Open `frontend/index.html` in a browser or use VS Code Live Server.
 
 ---
 
 ## API Endpoints
 
-| Method | Endpoint | Purpose |
+| Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/api/predict` | Predict colleges for a given rank |
-| `GET` | `/api/trends` | Year-wise cutoff trend for a college+program combo |
-| `POST` | `/api/compare` | Side-by-side comparison of two college+branch combos |
-| `GET` | `/api/colleges` | Institute autocomplete search |
-| `GET` | `/api/colleges/programs` | Programs list for an institute |
-| `GET` | `/api/colleges/branches` | Branch names, filtered by institute type |
-| `GET` | `/api/health` | Server status + data/model load check |
+| POST | `/api/predict` | Predict colleges for a given rank |
+| GET | `/api/trends` | Year-wise cutoff trend |
+| POST | `/api/compare` | Compare two college+branch combos |
+| GET | `/api/colleges` | Institute autocomplete search |
+| GET | `/api/colleges/programs` | Programs for an institute |
+| GET | `/api/colleges/branches` | Available branch names |
+| GET | `/api/health` | Server and model status |
+
+Swagger docs available at `http://localhost:8000/docs`
 
 ---
 
-## How the ML Works
+## ML Details
 
-- **Features:** `institute`, `branch`, `seat_type`, `gender`, `quota`, `year`
-- **Target:** `log(closing_rank)` — log-transform reduces rank skew
-- **Inference:** Batch prediction for all eligible combos in ~50ms
-
-**Guardrails:** ML output is clamped within ±12% of a historical linear projection to prevent over-extrapolation.
-
-**Confidence Band:** Expected range = `min – predicted` using 1.5× standard deviation (~87% CI) of historical closing ranks.
+- Features: institute, branch, seat type, gender, quota, year
+- Target: `log(closing_rank)` to reduce rank skew
+- Batch inference for all combos in ~50ms
+- ML output is clamped within ±12% of historical trend projection to prevent over-extrapolation
+- Confidence range uses 1.5× standard deviation of historical closing ranks (~87% CI)
 
 ---
 
-> ⚠️ Predictions are based on historical data. Actual 2026 cutoffs may vary. Use as a reference guide only.
+> Predictions are based on historical data and may not reflect actual 2026 cutoffs. Use as a reference only.

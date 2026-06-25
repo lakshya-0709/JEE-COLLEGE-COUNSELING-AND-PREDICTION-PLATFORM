@@ -1,6 +1,5 @@
-/* ═══════════════════════════════════════════════════
-   JEE Counselor — App Shell with Page Router
-   ═══════════════════════════════════════════════════ */
+// app.js — Router, navbar, particle canvas, stat counters
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
@@ -24,9 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initParticleBackground();
     checkBackendHealth();
 
-    /* ───────────────────────────────────────────────
-       Hash-Based Page Router
-       ─────────────────────────────────────────────── */
+    // Hash-Based Page Router
     function initRouter() {
         // Navigate on hash change
         window.addEventListener('hashchange', () => {
@@ -101,9 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initScrollReveal();
     }
 
-    /* ───────────────────────────────────────────────
-       Navbar
-       ─────────────────────────────────────────────── */
+    // Navbar
     function initNavbar() {
         // Sticky Navbar shadow on scroll
         window.addEventListener('scroll', () => {
@@ -148,9 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /* ───────────────────────────────────────────────
-       Animate Stat Numbers
-       ─────────────────────────────────────────────── */
+    // Animate Stat Numbers
     function initStatCounters() {
         if (statNumbers.length === 0) return;
 
@@ -168,9 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
         statNumbers.forEach(num => observer.observe(num));
     }
 
-    /* ───────────────────────────────────────────────
-       Scroll Reveal
-       ─────────────────────────────────────────────── */
+    // Scroll Reveal
     function initScrollReveal() {
         const revealElements = document.querySelectorAll('.reveal:not(.visible)');
         if (revealElements.length === 0) return;
@@ -187,9 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
         revealElements.forEach(el => revealObserver.observe(el));
     }
 
-    /* ───────────────────────────────────────────────
-       Particle Background
-       ─────────────────────────────────────────────── */
+    // Particle Background
     function initParticleBackground() {
         const canvas = document.getElementById('particle-canvas');
         if (!canvas) return;
@@ -289,9 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
         animate();
     }
 
-    /* ───────────────────────────────────────────────
-       Backend Health Check
-       ─────────────────────────────────────────────── */
+    // Backend Health Check
     async function checkBackendHealth() {
         const isHealthy = await api.healthCheck();
         if (isHealthy) {

@@ -5,6 +5,7 @@ from fastapi import APIRouter, Query
 from app.models.schemas import TrendResponse, TrendData
 from app.database import data_store
 from app.services.prediction import prediction_service
+from app.config import PREDICT_YEAR
 
 router = APIRouter()
 
@@ -43,12 +44,12 @@ async def get_cutoff_trends(
         elif change_pct > 10:
             trend_direction = "getting_easier"
 
-    # Predict 2026 closing rank using ML model
-    predicted_closing_2026 = prediction_service.predict_closing_rank(
-        inst_short, branch_short, seat_type, gender, quota, year=2026
+    # Predict closing rank for next season using ML model
+    predicted_closing_rank = prediction_service.predict_closing_rank(
+        inst_short, branch_short, seat_type, gender, quota
     )
 
-    if predicted_closing_2026 is None and trends:
+    if predicted_closing_rank is None and trends:
         sorted_trends = sorted(trends, key=lambda x: x["year"])
         latest_y = sorted_trends[-1]["year"]
         latest_val = sorted_trends[-1]["closing_rank"]
@@ -57,31 +58,31 @@ async def get_cutoff_trends(
             prev_y = sorted_trends[-2]["year"]
             year_diff = latest_y - prev_y
             annual_change = (latest_val - prev_val) / year_diff
-            projected = latest_val + (annual_change * (2026 - latest_y) * 0.5)
-            predicted_closing_2026 = max(1, int(projected))
+            projected = latest_val + (annual_change * (PREDICT_YEAR - latest_y) * 0.5)
+            predicted_closing_rank = max(1, int(projected))
         else:
-            predicted_closing_2026 = latest_val
+            predicted_closing_rank = latest_val
 
     # Reality-check: clamp ML prediction against historical projection
     # Prevents the ML model from over-extrapolating beyond what history supports
-    if predicted_closing_2026 is not None and trends:
+    if predicted_closing_rank is not None and trends:
         sorted_trends = sorted(trends, key=lambda x: x["year"])
         if len(sorted_trends) >= 2:
             latest_val = sorted_trends[-1]["closing_rank"]
             prev_val = sorted_trends[-2]["closing_rank"]
             year_diff = sorted_trends[-1]["year"] - sorted_trends[-2]["year"]
             annual_change = (latest_val - prev_val) / year_diff
-            hist_projected = latest_val + (annual_change * (2026 - sorted_trends[-1]["year"]) * 0.5)
+            hist_projected = latest_val + (annual_change * (PREDICT_YEAR - sorted_trends[-1]["year"]) * 0.5)
             # Bound ML prediction within ±12% of the historical projection
             lower_bound = hist_projected * 0.88
             upper_bound = hist_projected * 1.12
-            predicted_closing_2026 = max(1, int(max(lower_bound, min(upper_bound, predicted_closing_2026))))
+            predicted_closing_rank = max(1, int(max(lower_bound, min(upper_bound, predicted_closing_rank))))
 
     # Calculate expected range bounds using historical volatility
     predicted_range_min = None
     predicted_range_max = None
-    if predicted_closing_2026 is not None:
-        p = predicted_closing_2026
+    if predicted_closing_rank is not None:
+        p = predicted_closing_rank
         margin = None
 
         # Data-driven: use standard deviation of historical closing ranks
@@ -123,7 +124,8 @@ async def get_cutoff_trends(
         quota=quota,
         trends=[TrendData(**t) for t in trends],
         trend_direction=trend_direction,
-        predicted_closing_2026=predicted_closing_2026,
+        predict_year=PREDICT_YEAR,
+        predicted_closing_rank=predicted_closing_rank,
         predicted_range_min=predicted_range_min,
         predicted_range_max=predicted_range_max,
     )

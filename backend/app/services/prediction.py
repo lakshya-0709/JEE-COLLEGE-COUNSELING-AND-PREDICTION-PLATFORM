@@ -7,7 +7,7 @@ import os
 import joblib
 import pandas as pd
 import numpy as np
-from app.config import MODEL_PATH, PREPROCESSOR_PATH, SAFE_THRESHOLD, MODERATE_HIGH
+from app.config import MODEL_PATH, PREPROCESSOR_PATH, SAFE_THRESHOLD, MODERATE_HIGH, PREDICT_YEAR
 from app.database import data_store
 
 
@@ -35,8 +35,10 @@ class PredictionService:
 
     def predict_closing_rank(self, institute_short: str, branch_short: str,
                               seat_type: str, gender: str, quota: str,
-                              year: int = 2026) -> int | None:
+                              year: int = None) -> int | None:
         """Predict the closing rank for a specific combination using ML model."""
+        if year is None:
+            year = PREDICT_YEAR
         if not self._loaded or self.model is None:
             return None
 
@@ -148,7 +150,7 @@ class PredictionService:
                         'seat_type': seat_type,
                         'gender': gender_filter,
                         'quota': meta["quota"],
-                        'year': 2026
+                        'year': PREDICT_YEAR
                     })
                     combo_keys.append(key)
                 
@@ -194,8 +196,8 @@ class PredictionService:
                     # Calculate annual change rate
                     annual_change = (latest_val - prev_val) / year_diff
                     
-                    # Project to 2026 (2026 - latest_y) with a 50% dampening factor to be conservative
-                    projected = latest_val + (annual_change * (2026 - latest_y) * 0.5)
+                    # Project to target year with 50% dampening to be conservative
+                    projected = latest_val + (annual_change * (PREDICT_YEAR - latest_y) * 0.5)
                     
                     # Bounding box (max +/- 12% change from latest year to keep it realistic)
                     lower_bound = latest_val * 0.88
@@ -204,7 +206,7 @@ class PredictionService:
                 else:
                     hist_predicted = latest_val
 
-            # Use ML prediction for 2026 if available, but clamp it using the historical reality-check
+            # Use ML prediction for target year if available, but clamp it using historical reality-check
             if ml_predicted is not None and hist_predicted is not None:
                 # Bound the ML prediction within 15% of the historical projection
                 # Ensure the margin is at least 100 ranks to avoid overly narrow bounds at low ranks
@@ -240,7 +242,7 @@ class PredictionService:
                 "closing_rank_2023": years.get(2023),
                 "closing_rank_2022": years.get(2022),
                 "closing_rank_2021": years.get(2021),
-                "predicted_closing_2026": reference_rank,
+                "predicted_closing_rank": reference_rank,
                 "your_rank": student_rank if student_rank is not None else 0,
                 "rank_difference": rank_diff,
                 "confidence_score": 1.0 if student_rank is None else min(1.0, max(0.0, 1 - abs(student_rank - reference_rank) / reference_rank)),
@@ -250,7 +252,7 @@ class PredictionService:
 
         # Sort each category (best college quality first - lower cutoff rank number is better)
         for cat in results:
-            results[cat].sort(key=lambda x: x["predicted_closing_2026"])
+            results[cat].sort(key=lambda x: x["predicted_closing_rank"])
 
         return results
 

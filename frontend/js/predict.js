@@ -1,6 +1,4 @@
-/* ═══════════════════════════════════════════════════
-   JEE Counselor — Prediction Module Logic
-   ═══════════════════════════════════════════════════ */
+// predict.js — Prediction page: form, results tabs, trend modal
 
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
@@ -338,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 : `${formatRank(Math.abs(item.rank_difference))} ranks risky`;
 
             const latestClosing = item.closing_rank_2024 || item.closing_rank_2023 || 'N/A';
-            const closing2026 = item.predicted_closing_2026 ? formatRank(item.predicted_closing_2026) : 'ML Pending';
+            const closingPredicted = item.predicted_closing_rank ? formatRank(item.predicted_closing_rank) : 'ML Pending';
 
             card.innerHTML = `
                 <div class="card-header">
@@ -358,8 +356,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="detail-value text-glow">${formatRank(item.your_rank)}</span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">2026 Predicted Closing:</span>
-                        <span class="detail-value text-glow cyan-text">${closing2026}</span>
+                        <span class="detail-label">Predicted Closing:</span>
+                        <span class="detail-value text-glow cyan-text">${closingPredicted}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Margin:</span>
@@ -506,12 +504,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const closingRanks = data.trends.map(t => t.closing_rank);
         const openingRanks = data.trends.map(t => t.opening_rank);
 
-        // Add 2026 prediction if we have it
+        // Add predicted closing rank if we have it
         const nextPredictions = currentPredictions.safe.concat(currentPredictions.moderate, currentPredictions.dream);
         const match = nextPredictions.find(p => p.institute === data.institute && p.program === data.program && p.quota === data.quota);
-        if (match && match.predicted_closing_2026) {
-            labels.push('2026 (Pred)');
-            closingRanks.push(match.predicted_closing_2026);
+        if (match && match.predicted_closing_rank) {
+            labels.push(`${match.predict_year || 'Next'} (Pred)`);
+            closingRanks.push(match.predicted_closing_rank);
             openingRanks.push(null); // No opening prediction
         }
 

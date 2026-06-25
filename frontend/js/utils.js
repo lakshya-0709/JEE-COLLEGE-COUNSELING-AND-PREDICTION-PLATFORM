@@ -1,6 +1,5 @@
-/* ═══════════════════════════════════════════════════
-   Utility Functions
-   ═══════════════════════════════════════════════════ */
+// utils.js — Shared helpers: formatRank, toast, debounce, counter, skeletons
+
 
 
 

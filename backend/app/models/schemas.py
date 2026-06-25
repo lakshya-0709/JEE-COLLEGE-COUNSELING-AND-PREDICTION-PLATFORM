@@ -31,7 +31,7 @@ class CollegePrediction(BaseModel):
     closing_rank_2023: Optional[int] = None
     closing_rank_2022: Optional[int] = None
     closing_rank_2021: Optional[int] = None
-    predicted_closing_2026: Optional[int] = None
+    predicted_closing_rank: Optional[int] = None  # predicted closing rank for next season
     your_rank: int
     rank_difference: int  # positive = safe, negative = risky
     confidence_score: float = 0.0
@@ -40,7 +40,8 @@ class CollegePrediction(BaseModel):
 class PredictionResponse(BaseModel):
     """Response with all predictions grouped by chance."""
     your_rank: int
-    exam_type: str  # "JEE Main" or "JEE Advanced"
+    exam_type: str
+    predict_year: int = 0
     total_results: int
     safe: list[CollegePrediction] = []
     moderate: list[CollegePrediction] = []
@@ -77,7 +78,8 @@ class TrendResponse(BaseModel):
     quota: str
     trends: list[TrendData] = []
     trend_direction: str = ""       # "getting_harder", "getting_easier", "stable"
-    predicted_closing_2026: Optional[int] = None
+    predict_year: int = 0                          # which year is being predicted
+    predicted_closing_rank: Optional[int] = None
     predicted_range_min: Optional[int] = None
     predicted_range_max: Optional[int] = None
 

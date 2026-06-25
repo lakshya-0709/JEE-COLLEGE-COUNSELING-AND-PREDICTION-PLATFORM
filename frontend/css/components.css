@@ -1,8 +1,6 @@
-/* ═══════════════════════════════════════════════════
-   Component Styles
-   ═══════════════════════════════════════════════════ */
+﻿/* components.css - UI component styles */
 
-/* ─── Page Router ────────────────────────────────── */
+/* Page Router */
 .app-page {
     display: none;
 }
@@ -43,7 +41,7 @@
     transform: translateX(-3px);
 }
 
-/* ─── Navbar ─────────────────────────────────────── */
+/* Navbar */
 .navbar {
     position: fixed;
     top: 0;
@@ -134,7 +132,7 @@
     transition: all var(--transition-fast);
 }
 
-/* ─── Hero ───────────────────────────────────────── */
+/* Hero */
 .hero {
     min-height: 70vh;
     display: flex;
@@ -239,7 +237,7 @@
     color: #fff;
 }
 
-/* ─── Prediction Layout ──────────────────────────── */
+/* Prediction Layout */
 .prediction-layout {
     display: grid;
     grid-template-columns: 400px 1fr;
@@ -516,7 +514,7 @@
     color: var(--cyan);
 }
 
-/* ─── Trend Chart ────────────────────────────────── */
+/* Trend Chart */
 .trend-card {
     max-width: 900px;
     margin: 0 auto;
@@ -605,7 +603,7 @@
     font-weight: 600;
 }
 
-/* ─── Compare ────────────────────────────────────── */
+/* Compare */
 .compare-layout {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
@@ -659,7 +657,7 @@
     font-size: 0.95rem;
 }
 
-/* ─── Cutoff Lookup ──────────────────────────────── */
+/* Cutoff Lookup */
 .cutoff-layout {
     display: grid;
     grid-template-columns: 400px 1fr;
@@ -689,7 +687,7 @@
     overflow-y: auto;
 }
 
-/* ─── Cutoff Lookup Cards ────────────────────────── */
+/* Cutoff Lookup Cards */
 .cutoff-item-card {
     display: flex;
     gap: 1rem;
@@ -717,7 +715,7 @@
     margin-bottom: 1.5rem;
 }
 
-/* ─── Home / About Section ───────────────────────── */
+/* Home / About Section */
 .home-about {
     margin-bottom: 3.5rem;
 }
@@ -972,7 +970,7 @@
     flex-shrink: 0;
 }
 
-/* ─── Home Section Responsive ────────────────────── */
+/* Home Section Responsive */
 @media (max-width: 1024px) {
     .home-features-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1010,7 +1008,7 @@
     }
 }
 
-/* ─── Modal ──────────────────────────────────────── */
+/* Modal */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -1051,7 +1049,7 @@
     color: var(--red);
 }
 
-/* ─── Toast ──────────────────────────────────────── */
+/* Toast */
 .toast-container {
     position: fixed;
     bottom: 2rem;
@@ -1089,7 +1087,7 @@
     border-left: 3px solid var(--cyan);
 }
 
-/* ─── Footer ─────────────────────────────────────── */
+/* Footer */
 .footer {
     background: var(--bg-secondary);
     border-top: 1px solid var(--border-color);
@@ -1143,7 +1141,7 @@
     margin-top: 0.3rem;
 }
 
-/* ─── Responsive ─────────────────────────────────── */
+/* Responsive */
 @media (max-width: 900px) {
 
     .prediction-layout,

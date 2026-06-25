@@ -1,6 +1,5 @@
-/* ═══════════════════════════════════════════════════
-   JEE Counselor — College Comparison Module Logic
-   ═══════════════════════════════════════════════════ */
+// compare.js — College Comparison page: dual autocomplete, chart, metrics table
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements

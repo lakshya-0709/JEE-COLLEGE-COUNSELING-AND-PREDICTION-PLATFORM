@@ -3,6 +3,7 @@
 from fastapi import APIRouter, HTTPException
 from app.models.schemas import PredictionRequest, PredictionResponse
 from app.services.prediction import prediction_service
+from app.config import PREDICT_YEAR
 
 router = APIRouter()
 
@@ -51,6 +52,7 @@ async def predict_colleges(request: PredictionRequest):
     return PredictionResponse(
         your_rank=student_rank,
         exam_type=exam_type,
+        predict_year=PREDICT_YEAR,
         total_results=total,
         safe=results["safe"],
         moderate=results["moderate"],

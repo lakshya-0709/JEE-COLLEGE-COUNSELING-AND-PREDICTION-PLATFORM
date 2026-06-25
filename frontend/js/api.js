@@ -1,6 +1,5 @@
-/* ═══════════════════════════════════════════════════
-   API Client Module
-   ═══════════════════════════════════════════════════ */
+// api.js — Centralized fetch client for all backend endpoints
+
 
 const API_BASE = 'http://localhost:8000/api';
 

@@ -1,6 +1,5 @@
-/* ═══════════════════════════════════════════════════
-   JEE Counselor — Cutoff Trends Module Logic
-   ═══════════════════════════════════════════════════ */
+// trends.js — Cutoff Trends page: autocomplete, chart, table
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements

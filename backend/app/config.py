@@ -36,3 +36,8 @@ SAFE_THRESHOLD = 0.85      # rank < 85% of closing = Safe
 MODERATE_LOW = 0.85        # 85% - 105% = Moderate
 MODERATE_HIGH = 1.10
 DREAM_THRESHOLD = 1.10     # rank > 110% of closing = Dream
+
+# Prediction target year — automatically one year ahead of the latest data year.
+# Update this when new JoSAA data (e.g. 2025) is added.
+LATEST_DATA_YEAR = 2024
+PREDICT_YEAR = LATEST_DATA_YEAR + 1

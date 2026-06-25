@@ -1,6 +1,5 @@
-/* ═══════════════════════════════════════════════════
-   JEE Counselor — Cutoff Lookup Module Logic
-   ═══════════════════════════════════════════════════ */
+// cutoff_lookup.js — Cutoff Lookup page: search by college, branch, category, quota
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
@@ -154,9 +153,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Predicted closing rank range (2026) card
-        const predictedRankStr = data.predicted_closing_2026
-            ? data.predicted_closing_2026.toLocaleString('en-IN')
+        // Predicted closing rank card
+        const predictYear = data.predict_year || 'Next';
+        const predictedRankStr = data.predicted_closing_rank
+            ? data.predicted_closing_rank.toLocaleString('en-IN')
             : 'N/A';
         const minStr = data.predicted_range_min ? data.predicted_range_min.toLocaleString('en-IN') : null;
         const rangeDisplay = (minStr && predictedRankStr !== 'N/A') ? `${minStr} – ${predictedRankStr}` : predictedRankStr;
@@ -200,12 +200,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
 
-            <!-- Predicted 2026 Cutoff Card -->
+            <!-- Predicted Closing Rank Card -->
             <div class="glass-card cutoff-item-card fade-in" style="border: 1px solid rgba(0, 212, 255, 0.45); cursor: default; justify-content: space-between; padding: 1.5rem;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <div style="font-size: 2rem;">🔮</div>
                     <div>
-                        <h4 style="margin: 0; font-size: 1.1rem; color: var(--cyan);">Predicted 2026 Expected Range</h4>
+                        <h4 style="margin: 0; font-size: 1.1rem; color: var(--cyan);">${predictYear} Predicted Expected Range</h4>
                         <p style="margin: 0.2rem 0 0 0; font-size: 0.82rem; color: var(--text-secondary);">Expected closing cutoff range (Model prediction: ${predictedRankStr})</p>
                     </div>
                 </div>
