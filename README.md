@@ -14,7 +14,7 @@ ML-powered web app for JEE candidates — predicts 2026 admission chances using 
 ## Tech Stack
 
 - Backend: Python, FastAPI, Uvicorn
-- ML: scikit-learn (Gradient Boosting), pandas, NumPy, joblib
+- ML: scikit-learn (Random forest), pandas, NumPy, joblib
 - Frontend: HTML, CSS, JavaScript, Chart.js
 - Data: JoSAA Excel files → JSON (81,131 records, 2021–2024)
 
