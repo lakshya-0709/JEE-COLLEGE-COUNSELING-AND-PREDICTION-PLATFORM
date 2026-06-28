@@ -1,6 +1,6 @@
 """
 ML Model Training Script
-Trains a Gradient Boosting model to predict closing ranks
+Trains a Random forest model to predict closing ranks
 based on historical JoSAA cutoff data.
 """
 

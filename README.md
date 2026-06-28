@@ -6,7 +6,7 @@ ML-powered web app for JEE candidates — predicts 2026 admission chances using 
 
 ## Features
 
-- College Prediction — Gradient Boosting model on 81K+ records, groups results as Safe / Moderate / Dream with expected rank range
+- College Prediction — Random forest model on 81K+ records, groups results as Safe / Moderate / Dream with expected rank range
 - Cutoff Trends — 4-year charts with trend direction and 2026 forecast
 - College Comparison — Side-by-side cutoff chart + metrics + recommendation
 - Cutoff Lookup — Search historical closing ranks by college, branch, category, gender, quota
