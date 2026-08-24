@@ -61,4 +61,7 @@ async def health_check():
         "data_loaded": data_store._loaded,
         "ml_model_loaded": prediction_service._loaded,
         "total_records": len(data_store.cutoffs),
+        "mysql_enabled": data_store.use_mysql,
+        "mysql_status": data_store.mysql_status,
     }
+

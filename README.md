@@ -6,7 +6,7 @@ ML-powered web app for JEE candidates — predicts 2026 admission chances using 
 
 ## Features
 
-- College Prediction — Random forest model on 81K+ records, groups results as Safe / Moderate / Dream with expected rank range
+- College Prediction — Random Forest Regressor model on 81K+ records, groups results as Safe / Moderate / Dream with expected rank range
 - Cutoff Trends — 4-year charts with trend direction and 2026 forecast
 - College Comparison — Side-by-side cutoff chart + metrics + recommendation
 - Cutoff Lookup — Search historical closing ranks by college, branch, category, gender, quota
@@ -14,7 +14,7 @@ ML-powered web app for JEE candidates — predicts 2026 admission chances using 
 ## Tech Stack
 
 - Backend: Python, FastAPI, Uvicorn
-- ML: scikit-learn (Random forest), pandas, NumPy, joblib
+- ML: scikit-learn (Random Forest Regressor), pandas, NumPy, joblib
 - Frontend: HTML, CSS, JavaScript, Chart.js
 - Data: JoSAA Excel files → JSON (81,131 records, 2021–2024)
 
