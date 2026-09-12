@@ -1,7 +1,7 @@
 // api.js — Centralized fetch client for all backend endpoints
 
 
-const API_BASE = 'http://localhost:8000/api';
+const API_BASE = 'http://localhost:8002/api';
 
 const api = {
     /**

@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "full_name": "Lakshya",
+    "email": "laks@gmail.com",
+    "phone_number": "9998887770",
+    "password_hash": "4323215eb0e7e976a632539b259b160fac753deb317766432c17ba897c21a7fa",
+    "user_type": "student"
+  }
+]

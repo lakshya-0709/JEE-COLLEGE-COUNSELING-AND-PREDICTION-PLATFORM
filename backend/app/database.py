@@ -86,15 +86,25 @@ class DataStore:
         print(f"Loaded {len(self.cutoffs):,} cutoff records into memory backup.")
 
     def get_last_round_data(self) -> list[dict]:
-        """Get only the last round data per year (for predictions)."""
+        """Get only the last round data per year (for predictions) using 3NF JOINs."""
         if self.use_mysql:
             try:
                 conn = self._get_db_connection()
                 with conn.cursor() as cursor:
                     # Construct round filter
-                    conditions = [f"(year = {y} AND round = {r})" for y, r in LAST_ROUNDS.items()]
+                    conditions = [f"(c.year = {y} AND c.round = {r})" for y, r in LAST_ROUNDS.items()]
                     where_clause = " OR ".join(conditions)
-                    sql = f"SELECT * FROM `cutoffs` WHERE {where_clause};"
+                    sql = f"""
+                    SELECT 
+                        c.id, i.institute, i.institute_short, i.institute_type, i.state,
+                        p.program, p.branch_full, p.branch_short, p.degree_type, p.duration,
+                        c.quota, c.seat_type, c.gender, c.opening_rank, c.closing_rank, c.year, c.round
+                    FROM `cutoffs` c
+                    JOIN `institute_programs` ip ON c.inst_program_id = ip.id
+                    JOIN `institutes` i ON ip.institute_id = i.id
+                    JOIN `programs` p ON ip.program_id = p.id
+                    WHERE {where_clause};
+                    """
                     cursor.execute(sql)
                     results = cursor.fetchall()
                 conn.close()
@@ -106,27 +116,43 @@ class DataStore:
         return [r for r in self.cutoffs if r["round"] == LAST_ROUNDS.get(r["year"], 6)]
 
     def query(self, **filters) -> list[dict]:
-        """Query cutoff data with filters."""
+        """Query cutoff data with filters across normalized 3NF tables."""
         if self.use_mysql:
             try:
                 conn = self._get_db_connection()
                 with conn.cursor() as cursor:
+                    inst_cols = {"institute", "institute_short", "institute_type", "state"}
+                    prog_cols = {"program", "branch_full", "branch_short", "degree_type", "duration"}
+
                     conditions = []
                     params = []
                     for key, val in filters.items():
                         if val is None:
                             continue
+                        prefix = "i." if key in inst_cols else ("p." if key in prog_cols else "c.")
+                        col_ref = f"{prefix}`{key}`"
+
                         if isinstance(val, list):
                             if len(val) > 0:
                                 placeholders = ", ".join(["%s"] * len(val))
-                                conditions.append(f"`{key}` IN ({placeholders})")
+                                conditions.append(f"{col_ref} IN ({placeholders})")
                                 params.extend(val)
                         else:
-                            conditions.append(f"`{key}` = %s")
+                            conditions.append(f"{col_ref} = %s")
                             params.append(val)
 
                     where_sql = (" WHERE " + " AND ".join(conditions)) if conditions else ""
-                    sql = f"SELECT * FROM `cutoffs`{where_sql};"
+                    sql = f"""
+                    SELECT 
+                        c.id, i.institute, i.institute_short, i.institute_type, i.state,
+                        p.program, p.branch_full, p.branch_short, p.degree_type, p.duration,
+                        c.quota, c.seat_type, c.gender, c.opening_rank, c.closing_rank, c.year, c.round
+                    FROM `cutoffs` c
+                    JOIN `institute_programs` ip ON c.inst_program_id = ip.id
+                    JOIN `institutes` i ON ip.institute_id = i.id
+                    JOIN `programs` p ON ip.program_id = p.id
+                    {where_sql};
+                    """
                     cursor.execute(sql, params)
                     results = cursor.fetchall()
                 conn.close()
@@ -147,7 +173,7 @@ class DataStore:
         return results
 
     def get_institutes(self, institute_type: str = None) -> list[dict]:
-        """Get unique institutes with metadata."""
+        """Get unique institutes with metadata from normalized `institutes` table."""
         if self.use_mysql:
             try:
                 conn = self._get_db_connection()
@@ -155,14 +181,14 @@ class DataStore:
                     if institute_type:
                         sql = """
                         SELECT DISTINCT institute, institute_short, institute_type, state
-                        FROM `cutoffs` WHERE institute_type = %s
+                        FROM `institutes` WHERE institute_type = %s
                         ORDER BY institute_short;
                         """
                         cursor.execute(sql, (institute_type,))
                     else:
                         sql = """
                         SELECT DISTINCT institute, institute_short, institute_type, state
-                        FROM `cutoffs` ORDER BY institute_short;
+                        FROM `institutes` ORDER BY institute_short;
                         """
                         cursor.execute(sql)
                     results = cursor.fetchall()
@@ -188,17 +214,24 @@ class DataStore:
         return sorted(institutes, key=lambda x: x["institute_short"])
 
     def get_branches(self, institute_types: list[str] = None) -> list[str]:
-        """Get unique normalized branch names, optionally filtered by institute type."""
+        """Get unique normalized branch names from normalized `programs` table."""
         if self.use_mysql:
             try:
                 conn = self._get_db_connection()
                 with conn.cursor() as cursor:
                     if institute_types:
                         placeholders = ", ".join(["%s"] * len(institute_types))
-                        sql = f"SELECT DISTINCT branch_short FROM `cutoffs` WHERE institute_type IN ({placeholders}) ORDER BY branch_short;"
+                        sql = f"""
+                        SELECT DISTINCT p.branch_short 
+                        FROM `programs` p
+                        JOIN `institute_programs` ip ON p.id = ip.program_id
+                        JOIN `institutes` i ON ip.institute_id = i.id
+                        WHERE i.institute_type IN ({placeholders}) 
+                        ORDER BY p.branch_short;
+                        """
                         cursor.execute(sql, institute_types)
                     else:
-                        sql = "SELECT DISTINCT branch_short FROM `cutoffs` ORDER BY branch_short;"
+                        sql = "SELECT DISTINCT branch_short FROM `programs` ORDER BY branch_short;"
                         cursor.execute(sql)
                     rows = cursor.fetchall()
                 conn.close()
@@ -218,8 +251,12 @@ class DataStore:
                 conn = self._get_db_connection()
                 with conn.cursor() as cursor:
                     sql = """
-                    SELECT DISTINCT program, branch_full, branch_short, degree_type
-                    FROM `cutoffs` WHERE institute = %s ORDER BY branch_short;
+                    SELECT DISTINCT p.program, p.branch_full, p.branch_short, p.degree_type
+                    FROM `programs` p
+                    JOIN `institute_programs` ip ON p.id = ip.program_id
+                    JOIN `institutes` i ON ip.institute_id = i.id
+                    WHERE i.institute = %s 
+                    ORDER BY p.branch_short;
                     """
                     cursor.execute(sql, (institute,))
                     results = cursor.fetchall()
@@ -245,20 +282,22 @@ class DataStore:
     def get_trend(self, institute: str, program: str,
                   seat_type: str = "OPEN", gender: str = "Gender-Neutral",
                   quota: str = "AI") -> list[dict]:
-        """Get year-wise cutoff trend for a specific combo."""
+        """Get year-wise cutoff trend for a specific combo from normalized 3NF schema."""
         if self.use_mysql:
             try:
                 conn = self._get_db_connection()
                 with conn.cursor() as cursor:
-                    # Filter last rounds per year
-                    round_conditions = [f"(year = {y} AND round = {r})" for y, r in LAST_ROUNDS.items()]
+                    round_conditions = [f"(c.year = {y} AND c.round = {r})" for y, r in LAST_ROUNDS.items()]
                     round_clause = " OR ".join(round_conditions)
                     sql = f"""
-                    SELECT year, opening_rank, closing_rank, round
-                    FROM `cutoffs`
-                    WHERE institute = %s AND program = %s AND seat_type = %s
-                      AND gender = %s AND quota = %s AND ({round_clause})
-                    ORDER BY year;
+                    SELECT c.year, c.opening_rank, c.closing_rank, c.round
+                    FROM `cutoffs` c
+                    JOIN `institute_programs` ip ON c.inst_program_id = ip.id
+                    JOIN `institutes` i ON ip.institute_id = i.id
+                    JOIN `programs` p ON ip.program_id = p.id
+                    WHERE i.institute = %s AND p.program = %s AND c.seat_type = %s
+                      AND c.gender = %s AND c.quota = %s AND ({round_clause})
+                    ORDER BY c.year;
                     """
                     cursor.execute(sql, (institute, program, seat_type, gender, quota))
                     results = cursor.fetchall()
@@ -279,7 +318,7 @@ class DataStore:
         return sorted(results, key=lambda x: x["year"])
 
     def search_institutes(self, query: str) -> list[dict]:
-        """Search institutes by name (for autocomplete)."""
+        """Search institutes by name (for autocomplete) from normalized `institutes` table."""
         if self.use_mysql:
             try:
                 conn = self._get_db_connection()
@@ -287,7 +326,7 @@ class DataStore:
                     search_pattern = f"%{query.lower()}%"
                     sql = """
                     SELECT DISTINCT institute, institute_short, institute_type, state
-                    FROM `cutoffs`
+                    FROM `institutes`
                     WHERE LOWER(institute) LIKE %s OR LOWER(institute_short) LIKE %s
                     ORDER BY institute_short LIMIT 20;
                     """
@@ -318,3 +357,4 @@ class DataStore:
 
 # Global singleton
 data_store = DataStore()
+
